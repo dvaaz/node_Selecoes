@@ -60,6 +60,7 @@ app.post('/selecoes', (req,res)=> {
 app.delete('/selecoes/:id', (req,res)=>{
     console.log(req.params.id)
     let selecao = findIndexSelecao(req.params.id)
+    console.log(`Selecao ${selecao}`)
 
     if (selecao) {
         selecoes.splice(selecao, 1)
@@ -69,6 +70,12 @@ app.delete('/selecoes/:id', (req,res)=>{
         res.status(404)
         .send('Seleção não encontrada')
     }
+})
+// Fazer o PUT
+// PUT, selecao
+app.patch('selecoes/:id', (req, res)=>{
+    console.log(req.params.id)
+    
 })
 
 
