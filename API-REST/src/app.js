@@ -73,7 +73,7 @@ app.delete('/selecoes/:id', (req,res)=>{
 })
 // Fazer o PUT
 // PUT, selecao
-app.patch('selecoes/:id', (req, res)=>{
+app.put('selecoes/:id', (req, res)=>{
     console.log(req.params.id)
     
 })
