@@ -1,6 +1,8 @@
 import express from 'express'
 
+
 const app = express()
+
 
 // Indicar para o express ler o body como json
 app.use(express.json())
@@ -27,7 +29,7 @@ const selecoes = [
 
 // Criando uma rota padr"ao (ou raiz)
 app.get('/',(req,res)=>{
-    res.send('Hello World')
+    res.send('Hello World from Node')
 })
 
 // GET, todas as seleções
@@ -62,21 +64,25 @@ app.delete('/selecoes/:id', (req,res)=>{
     let selecao = findIndexSelecao(req.params.id)
     console.log(`Selecao ${selecao}`)
 
-    if (selecao) {
-        selecoes.splice(selecao, 1)
+    if (index !== -1) {
+        selecoes.splice(index, 1)
         res.status(200)
         .send(selecoes)
     } else {
-        res.status(404)
-        .send('Seleção não encontrada')
+        res.status(404).send('Seleção não encontrada')
     }
 })
 // Fazer o PUT
 // PUT, selecao
 app.put("/selecoes/:id", (req, res) => {
-    let index = buscaIndexSelecao(req.params.id)
-    selecoes[index] = req.body;
-    res.status(200).send("Seleção atualizada com sucesso!");
+    let index = findIndexSelecao(req.params.id)
+    
+    if (index !== -1) {
+        selecoes[index] = req.body
+        res.status(200).send("Seleção atualizada com sucesso!")
+    } else {
+        res.status(404).send("Seleção não encontrada")
+    }
 });
 
 
