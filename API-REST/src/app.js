@@ -37,19 +37,15 @@ function conectionStatusHandler(error, result){
 // })
 
 // GET, todas as seleções
-app.get('/selecoes',(req,result)=>{
+app.get('/selecoes',(req,res)=>{
     // res.status(200).send(selecoes)
     const sql = "SELECT * FROM db_selecoes.db_selecao;"
-    conexao.query(sql, (error, result)=>{
-           if(error) {
-            console.log(error)
-            // TODO: status 404 error
-        } else {
-            res.status(200).json(result)
-        }
+    conexao.query(sql, (error, resultado)=>{
+        conectionStatusHandler(error, resultado);
+    })
 })
 
-app.get('/selecoes/:id',(req, result)=>{
+app.get('/selecoes/:id',(req, res)=>{
 
     console.log(req.params.id)
     // let selecao = findSelecaoById(req.params.id)  
@@ -73,46 +69,46 @@ app.get('/selecoes/:id',(req, result)=>{
 })
 
 // POST, selecao
-app.post('/selecoes', (req,result)=> {
+app.post('/selecoes', (req,res)=> {
     // selecoes.push(req.body)
     // res.status(200).send('Seleção cadastrada com sucesso!')
     
     const selecao = req.body
     const sql = "INSERT into db_selecoes.db_selecao SET ?;"
-    conexao.query(sql, selecao, (error, result)=>{
+    conexao.query(sql, selecao, (error, resultado)=>{
         if(error) {
             console.log(error)
             // TODO: status 404 error
         } else {
-            res.status(201).json(result)
+            res.status(201).json(resultado)
         }
     })
 })
 
 // DELETE, selecao
-app.delete('/selecoes/:id', (req,result)=>{
+app.delete('/selecoes/:id', (req,res)=>{
     console.log(req.params.id)
     let selecao = findIndexSelecao(req.params.id)
     console.log(`Selecao ${selecao}`)
 
     if (index !== -1) {
         selecoes.splice(index, 1)
-        result.status(200)
+        res.status(200)
         .send(selecoes)
     } else {
-        result.status(404).send('Seleção não encontrada')
+        res.status(404).send('Seleção não encontrada')
     }
 })
 // Fazer o PUT
 // PUT, selecao
-app.put("/selecoes/:id", (req, result) => {
+app.put("/selecoes/:id", (req, res) => {
     let index = findIndexSelecao(req.params.id)
     
     if (index !== -1) {
         selecoes[index] = req.body
-        result.status(200).send("Seleção atualizada com sucesso!")
+        res.status(200).send("Seleção atualizada com sucesso!")
     } else {
-        result.status(404).send("Seleção não encontrada")
+        res.status(404).send("Seleção não encontrada")
     }
 });
 
