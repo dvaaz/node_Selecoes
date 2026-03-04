@@ -7,7 +7,7 @@ function conectionStatusHandler(error, result){
 
 class SelecaoController {
     // Listar tudo
-    index(){
+    index(res){
         const sql = "SELECT * FROM db_selecoes.db_selecao;"
         conexao.query(sql, (error, result)=>{
             if(error) {
@@ -35,11 +35,12 @@ class SelecaoController {
     }
 
     // Listar por grupo
-    // TODO
+    // TODO: organizar para que sejam exibidos apenas os times de determinado grupo
     showGroup(){}
 
     // Criar dados
     store(req, res){
+        console.log(req.body.json)
         const selecao = req.body
         const sql = "INSERT into db_selecoes.db_selecao SET ?;"
         conexao.query(sql, selecao, (error, resultado)=>{
@@ -56,7 +57,7 @@ class SelecaoController {
     update(req, res){
         const id = req.params.id;
         const selecao = req.body;
-        const sql = "UPDATE db_selecoes.db_selecao SET ? WHERE id=?;"
+        const sql = "UPDATE db_selecoes.db_selecao SET ? WHERE id_selecao=?;"
         conexao.query(sql, [selecao, id], (error, resultado)=> {
             if(error) {
                 console.log(error)
@@ -69,7 +70,7 @@ class SelecaoController {
     // Remover dados
     delete(){
         const id = req.body.id
-        const sql = "DELETE from db_selecoes.db_selecao WHERE id_selecaors=?;"
+        const sql = "DELETE from db_selecoes.db_selecao WHERE id_selecao=?;"
         conexao.query(sql, id, (error, resultado)=>{
             if(error) {
                 console.log(error)
