@@ -7,7 +7,7 @@ function conectionStatusHandler(error, result){
 
 class SelecaoController {
     // Listar tudo
-    index(res){
+    index(req,res){
         const sql = "SELECT * FROM db_selecoes.db_selecao;"
         conexao.query(sql, (error, result)=>{
             if(error) {
@@ -57,7 +57,7 @@ class SelecaoController {
     update(req, res){
         const id = req.params.id;
         const selecao = req.body;
-        const sql = "UPDATE db_selecoes.db_selecao SET ? WHERE id_selecao=?;"
+        const sql = "UPDATE db_selecoes.db_selecao SET ? WHERE ?;"
         conexao.query(sql, [selecao, id], (error, resultado)=> {
             if(error) {
                 console.log(error)
@@ -68,8 +68,8 @@ class SelecaoController {
     }
     
     // Remover dados
-    delete(){
-        const id = req.body.id
+    delete(req, res){
+        const id = req.body
         const sql = "DELETE from db_selecoes.db_selecao WHERE id_selecao=?;"
         conexao.query(sql, id, (error, resultado)=>{
             if(error) {
