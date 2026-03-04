@@ -1,4 +1,5 @@
 import conexao from "../../../infra/conexao.js"
+import Sanitize from "../utils/Sanitize.js"
 // regra de negocios
 // functions
 function conectionStatusHandler(error, result){
@@ -40,9 +41,10 @@ class SelecaoController {
 
     // Criar dados
     store(req, res){
+        //TODO sanitizar com o Sanitize
         console.log(req.body.json)
         const selecao = req.body
-        const sql = "INSERT into db_selecoes.db_selecao SET ?;"
+        const sql = "INSERT into db_selecoes.db_selecao (pais_selecao, grupo_delecao) values (?, ?);"
         conexao.query(sql, selecao, (error, resultado)=>{
             if(error) {
                 console.log(error)
