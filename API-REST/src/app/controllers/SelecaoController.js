@@ -1,5 +1,5 @@
-import conexao from "../../../infra/conexao.js"
-import Sanitize from "../utils/Sanitize.js"
+import conexao from "../../../infra/conexao.js";
+import Sanitize from "../utils/Sanitize.js";
 // regra de negocios
 // functions
 function conectionStatusHandler(error, result){
@@ -22,8 +22,9 @@ class SelecaoController {
     
     // Listar por id
     show(req, res){
-        console.log(req.params.id)
-        const id = req.params.id;
+        const clrReq = Sanitize(req)
+        console.log(clr_req.params.id)
+        const id = clr_req.params.id;
         const sql = "SELECT * FROM db_selecoes.db_selecao WHERE id_selecao=?;"
         conexao.query(sql, id, (error, result)=>{
             if(error) {
@@ -41,7 +42,7 @@ class SelecaoController {
 
     // Criar dados
     store(req, res){
-        //TODO sanitizar com o Sanitize
+        const clrReq = Sanitize(req)
         console.log(req.body.json)
         const selecao = req.body
         const sql = "INSERT into db_selecoes.db_selecao (pais_selecao, grupo_delecao) values (?, ?);"
@@ -57,8 +58,8 @@ class SelecaoController {
 
     // Atualizar dados
     update(req, res){
-        const id = req.params.id;
-        const selecao = req.body;
+        const id = clrReq.params.id;
+        const selecao = clrReq.body;
         const sql = "UPDATE db_selecoes.db_selecao SET ? WHERE ?;"
         conexao.query(sql, [selecao, id], (error, resultado)=> {
             if(error) {
@@ -71,7 +72,8 @@ class SelecaoController {
     
     // Remover dados
     delete(req, res){
-        const id = req.body
+        const clrReq = Sanitize(req)
+        const id = clrReq.body
         const sql = "DELETE from db_selecoes.db_selecao WHERE id_selecao=?;"
         conexao.query(sql, id, (error, resultado)=>{
             if(error) {
