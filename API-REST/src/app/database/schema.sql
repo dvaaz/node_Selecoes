@@ -1,92 +1,34 @@
--- Tabela para criacao de selecoes aleatórias
-CREATE SCHEMA db_selecao DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-
--- Tabela de posições
-CREATE TABLE `db_selecao`.`tb_posicao` (
-  `id_posicao` INT NOT NULL AUTO_INCREMENT,
-  `nome_posicao` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id_posicao`)
+-- Tabela de questões de matemática
+CREATE SCHEMA db_matematica DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+-- Tabela de temas (adição, subtração, potenciação, mmc, etc...)
+CREATE TABLE temas (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL
 );
 
--- Tabela de times
-CREATE TABLE `db_selecao`.`tb_time` (
-  `id_time` INT NOT NULL AUTO_INCREMENT,
-  `nome_time` VARCHAR(100) NOT NULL,
-  PRIMARY KEY (`id_time`)
+-- Tabela de questões
+CREATE TABLE questoes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    enunciado TEXT NOT NULL,
 );
 
--- Tabela de países
-CREATE TABLE `db_selecao`.`tb_pais` (
-  `id_pais` INT NOT NULL AUTO_INCREMENT,
-  `nome_pais` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id_pais`)
+-- Tabela de respostas
+CREATE TABLE respostas (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    questao_id INT NOT NULL,
+    texto VARCHAR(255) NOT NULL,
+    correta BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT fk_respostas_questoes
+    FOREIGN KEY (questao_id) REFERENCES questoes(id)
 );
 
--- Tabela de jogadores
-CREATE TABLE `db_selecao`.`tb_jogadores` (
-  `id_jogador` INT NOT NULL AUTO_INCREMENT,
-  `nome_jogador` VARCHAR(60) NOT NULL,
-  `id_time` INT NOT NULL,
-  `id_pais` INT NOT NULL,
-  PRIMARY KEY (`id_jogador`),
-  CONSTRAINT `fk_jogador_time`
-    FOREIGN KEY (`id_time`)
-    REFERENCES `db_selecao`.`tb_time`(`id_time`),
-  CONSTRAINT `fk_jogador_pais`
-    FOREIGN KEY (`id_pais`)
-    REFERENCES `db_selecao`.`tb_pais`(`id_pais`)
-);
-
--- Relação N:N entre jogador e posição
-CREATE TABLE `db_selecao`.`tb_jogador_posicao` (
-  `id_jogador` INT NOT NULL,
-  `id_posicao` INT NOT NULL,
-  PRIMARY KEY (`id_jogador`, `id_posicao`),
-  CONSTRAINT `fk_jogador_posicao_jogador`
-    FOREIGN KEY (`id_jogador`)
-    REFERENCES `db_selecao`.`tb_jogadores`(`id_jogador`),
-  CONSTRAINT `fk_jogador_posicao_posicao`
-    FOREIGN KEY (`id_posicao`)
-    REFERENCES `db_selecao`.`tb_posicao`(`id_posicao`)
-);
-
--- Tabela de seleção 
-CREATE TABLE `db_selecao`.`tb_selecao` (
-  `id_selecao` INT NOT NULL AUTO_INCREMENT,
-  `nome_selecao` VARCHAR(100) NOT NULL,
-  `id_pais` INT NOT NULL UNIQUE,
-  PRIMARY KEY (`id_selecao`),
-  CONSTRAINT `fk_selecao_pais`
-    FOREIGN KEY (`id_pais`)
-    REFERENCES `db_selecao`.`tb_pais`(`id_pais`)
-);
-
--- Relação entre seleção e jogadores
-CREATE TABLE `db_selecao`.`tb_escalacao_selecao` (
-  `id_escalacao_selecao` INT NOT NULL AUTO_INCREMENT,
-  `id_selecao` INT NOT NULL,
-  `id_jogador` INT NOT NULL,
-  `id_posicao` INT NOT NULL,
-  PRIMARY KEY (`id_escalacao_selecao`),
-  CONSTRAINT `fk_escalacao_selecao_selecao`
-    FOREIGN KEY (`id_selecao`)
-    REFERENCES `db_selecao`.`tb_selecao`(`id_selecao`),
-  CONSTRAINT `fk_escalacao_selecao_jogador`
-    FOREIGN KEY (`id_jogador`)
-    REFERENCES `db_selecao`.`tb_jogadores`(`id_jogador`),
-  CONSTRAINT `fk_escalacao_selecao_posicao`
-    FOREIGN KEY (`id_posicao`)
-    REFERENCES `db_selecao`.`tb_posicao`(`id_posicao`)
-);
-
--- Anotação da escalação da seleção
-CREATE TABLE `tb_escalacao` (
-  `id_escalacao` INT AUTO_INCREMENT,
-  `id_selecao` INT NOT NULL,
-  `data_escalacao` DATETIME,
-  PRIMARY KEY (`id_escalacao`),
-
-  CONSTRAINT `fk_escalacao_selecao`
-  FOREIGN KEY (`id_selecao`)
-  REFERENCES tb_selecao(`id_selecao`)
+-- Tabela de ligação (questões podem ter mais de um tema)
+CREATE TABLE questoes_temas (
+    questao_id INT NOT NULL,
+    tema_id INT NOT NULL,
+    PRIMARY KEY (questao_id, tema_id),
+    CONSTRAINT fk_questoes_temas_questao
+    FOREIGN KEY (questao_id) REFERENCES questoes(id),
+    CONSTRAINT fk_questoes_temas_temas
+    FOREIGN KEY (tema_id) REFERENCES temas(id)
 );
