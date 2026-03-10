@@ -1,19 +1,19 @@
 -- Tabela de questões de matemática
 CREATE SCHEMA db_matematica DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
 -- Tabela de temas (adição, subtração, potenciação, mmc, etc...)
-CREATE TABLE temas (
+CREATE TABLE tb_temas (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL
 );
 
 -- Tabela de questões
-CREATE TABLE questoes (
+CREATE TABLE tb_questoes (
     id INT PRIMARY KEY AUTO_INCREMENT,
     enunciado TEXT NOT NULL,
 );
 
 -- Tabela de respostas
-CREATE TABLE respostas (
+CREATE TABLE tb_respostas (
     id INT PRIMARY KEY AUTO_INCREMENT,
     questao_id INT NOT NULL,
     texto VARCHAR(255) NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE respostas (
 );
 
 -- Tabela de ligação (questões podem ter mais de um tema)
-CREATE TABLE questoes_temas (
+CREATE TABLE tb_questoes_temas (
     questao_id INT NOT NULL,
     tema_id INT NOT NULL,
     PRIMARY KEY (questao_id, tema_id),
