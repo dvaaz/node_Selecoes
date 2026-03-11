@@ -1,11 +1,17 @@
-import mysql from 'mysql'
+// database/index.js
+import mysql from "mysql";
 
-const conexao = mysql.createConnection({
-    host: '127.0.0.1',
-    port: '3306',
-    user: 'root',
-    password: '',
-    database: 'db_selecoes'
-})
+// cria conexão
+const pool = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'db_matematica',
+  waitForConnections: true,
+  connectionLimit: 5, // limite de conexões. 0 para sem limite
+  queueLimit: 5 // limite de filas de conexões. 0 para sem limite
+  
+});
 
-export default conexao
+// exporta para usar em outros arquivos
+export default pool;

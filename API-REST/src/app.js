@@ -1,5 +1,6 @@
 import express from 'express'
-import SelecaoController from './app/controllers/SelecaoController.js'
+import QuestoesController from './controllers/QuestoesController.js'
+import TemaController from './controllers/TemaController.js'
 
 const app = express()
 
@@ -9,20 +10,7 @@ app.use(express.json())
 
 
 
-// GET, todas as seleções
-app.get('/selecoes', SelecaoController.index)
 
-app.get('/selecoes/:id', SelecaoController.show)
-
-// POST, selecao
-app.post('/selecoes', SelecaoController.store)
-
-// DELETE, selecao
-// TODO está errado (refatorar)
-app.delete('/selecoes/:id', SelecaoController.delete)
-// Fazer o PUT
-// PUT, selecao
-app.put("/selecoes/:id", SelecaoController.update);
 
 
 export default app

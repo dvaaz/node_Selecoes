@@ -1,4 +1,3 @@
-import conexao from "../../../infra/conexao.js";
 import Sanitize from "../utils/Sanitize.js";
 // regra de negocios
 // functions
@@ -7,31 +6,28 @@ function conectionStatusHandler(error, result){
 }
 const san = new Sanitize();
 
-class MatematicaController {
+class QuestoesController {
     // Listar todas as questoes
     index(req,res){
-        const sql = "SELECT * FROM db_matematica.tb_questoes;"
-        conexao.query(sql, (error, result)=>{
-            if(error) {
-                console.log(error)
-                // TODO: status 404 error
-            } else {
-                res.status(200).json(result)
+        try{
+            const result = await QuestoesRepository.findall();
+            res.status(200).json(result);
+        } catch(error) {
+                console.log(error);
+                res.status(404).json({ error: "Questões não encontradas" });
             }
-        })
+        }
     }
     
     // Listar todos os temas
-    indexThemes(req, res){
-        const sql = "SELECT * FROM db_matematica.tb_temas;"
-        conexao.query(sql, (error, result)=>{
-            if(error) {
-                console.log(error)
-                // TODO: status 404 error
-            } else {
-                res.status(200).json(result)
+    listByThemes(req, res){
+        try{
+            const result = await QuestoesRepository.findallByTheme();
+            res.status(200).json(result);
+        } catch(error) {
+                console.log(error);
+                res.status(404).json({ error: "Questões não encontradas" });
             }
-        })
     }
 
     // Listar todas as questoes de um tema
@@ -117,4 +113,4 @@ class MatematicaController {
     }
 }
 // Padrão Singleton
-export default new MatematicaController()
+export default new QuestoesController()
