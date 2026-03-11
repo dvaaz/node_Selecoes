@@ -1,3 +1,4 @@
+import QuestoesRepository from "../repositories/QuestoesRepository.js";
 import Sanitize from "../utils/Sanitize.js";
 // regra de negocios
 // functions
@@ -17,12 +18,12 @@ class QuestoesController {
                 res.status(404).json({ error: "Questões não encontradas" });
             }
         }
-    }
     
-    // Listar todos os temas
+    
+    // Listar questoes por tema
     listByThemes(req, res){
         try{
-            const result = await QuestoesRepository.findallByTheme();
+            const result = await QuestoesRepository.findByTheme();
             res.status(200).json(result);
         } catch(error) {
                 console.log(error);
