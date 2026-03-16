@@ -9,7 +9,7 @@ const san = new Sanitize();
 
 class QuestoesController {
     // Listar todas as questoes
-    index(req,res){
+    async index(req,res){
         try{
             const result = await QuestoesRepository.findall();
             res.status(200).json(result);
@@ -21,9 +21,10 @@ class QuestoesController {
     
     
     // Listar questoes por tema
-    listByThemes(req, res){
+    async findByTheme(req, res){
         try{
-            const result = await QuestoesRepository.findByTheme();
+            const clrReq = san.text(req);
+            const result = await QuestoesRepository.findByTheme(clrReq.query.tema);
             res.status(200).json(result);
         } catch(error) {
                 console.log(error);
@@ -31,60 +32,48 @@ class QuestoesController {
             }
     }
 
-    // Listar todas as questoes de um tema
-    indexByTheme(req, res){
-        const clrReq = san.text(req)
-        console.log(clr_req.params.id)
-        const id = clr_req.params.id;
-        const sql = "SELECT * FROM db_matematica.tb_questoes WHERE id_tema=?;"
-        conexao.query(sql, id, (error, result)=>{
-            if(error) {
-                console.log(error)
-                // TODO: status 404 error
-            } else {
-                res.status(200).json(result)
-            }
-        })
+    // Encontrar por Id
+    async findById(req, res){
+        try{
+            const clrReq = san.text(req);
+            const result = await QuestoesRepository.findById(clrReq.params.id);
+            res.status(200).json(result);
+        } catch(error) {
+            console.log(error);
+            res.status(404).json({ error: "Questão não encontrada" });
+        }
     }
 
-    // Buscar por id
-    show(req, res){
-        const clrReq = san.text(req)
-        console.log(clr_req.params.id)
-        const id = clr_req.params.id;
-        const sql = "SELECT * FROM db_matematica.tb_questoes WHERE id=?;"
-        conexao.query(sql, id, (error, result)=>{
-            if(error) {
-                console.log(error)
-                // TODO: status 404 error
-            } else {
-                res.status(200).json(result)
-            }
-    })
+    // Busca por trecho do enunciado com tratamento
+    async findByEnunciado(req, res){
+        try{
+            const clrReq = san.text(req);
+            const result = await QuestoesRepository.findByEnunciado(clrReq.query.enunciado);
+            res.status(200).json(result);
+        } catch(error) {
+            console.log(error);
+            res.status(404).json({ error: "Questões não encontradas" });
+        }
     }
 
-    // Listar por grupo
-    // TODO: organizar para que sejam exibidos apenas os times de determinado grupo
-    showGroup(){}
+    // Criar questão
+    // tratamento do request atraves de sanitizacao
+    // campos: enunciado_questao
+    // TODO:Haverá também o tratamento para associar a questão ao tema e as respostas
+    async store(req, res){
+        try{
+            const clrReq = san.text(req);
+            const result = await QuestoesRepository.create(clrReq.body);
+            res.status(201).json(result);
+        } catch(error) {
+            console.log(error);
+            res.status(400).json({ error: "Erro ao criar questão" });
+        }
 
-    // Criar dados
-    store(req, res){
-        const clrReq = san.text(req);
-        console.log(req.body.json)
-        const selecao = req.body
-        const sql = "INSERT into db_matematica.tb_selecao (pais_selecao, grupo_delecao) values (?, ?);"
-        conexao.query(sql, selecao, (error, resultado)=>{
-            if(error) {
-                console.log(error)
-                // TODO: status 404 error
-            } else {
-                res.status(200).json(resultado)
-            }
-        })
     }
 
     // Atualizar dados
-    update(req, res){
+    async update(req, res){
         const clrReq = san.text(req);
         const id = clrReq.params.id;
         const selecao = clrReq.body;
