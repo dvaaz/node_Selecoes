@@ -22,7 +22,7 @@ class QuestoesRepository {
                     JOIN tb_temas t ON qt.id_tema = t.id_tema
                     WHERE t.nome_tema = ?;`;
             return new Promise ((resolve, reject) => {
-                conexao.query(sql, theme, (error, result) => {
+                conexao.query(sql, [theme], (error, result) => {
                     if (error) {
                         return reject (error);
                     }
@@ -32,10 +32,11 @@ class QuestoesRepository {
             })
     }
     // Buscar questão por id
+    // apenas enunciado e id para associar a resposta e tema
     findById(id) {
         const sql = 'SELECT * FROM tb_questoes WHERE id = ?';
         return new Promise((resolve, reject) => {
-            conexao.query(sql, id, (error, result) => {
+            conexao.query(sql, [id], (error, result) => {
                 if (error) {
                     return reject(error);
                 }
@@ -56,15 +57,32 @@ class QuestoesRepository {
                 const questoes = JSON.parse(JSON.stringify(result));
                 resolve(questoes);
             })
-        })
+        });
+    }
+
+    // Buscar questao e respostas por id da questao (teste)
+    showQuestaoComRespostas(id) {
+        const sql = `SELECT q.enunciado_questao, r.texto_resposta, r.correta_resposta
+                    FROM tb_questoes q
+                    JOIN tb_respostas r ON q.id_questao = r.id_questao
+                    WHERE q.id_questao = ?;`;
+        return new Promise((resolve, reject) => {
+            conexao.query(sql, [id], (error, result) => {
+                if (error) {
+                    return reject(error);
+                }
+                const questaoRespostas = JSON.parse(JSON.stringify(result));
+                resolve(questaoComRespostas);
+            })
+        });
     }
 
     // Criar questão no banco de dados via conexao.query
     // request deve conter: enunciado_questao
     // returns o id da questão para associar ao tb_questoes_temas e tb_respostas
-    create(questao) {
+    create(enunciado) {
         const sql = 'INSERT INTO tb_questoes (enunciado_questao) VALUES (?)';
-        const values = [questao.enunciado_questao];
+        const values = [enunciado.enunciado_questao];
         return new Promise((resolve, reject) => {
             conexao.query(sql, values, (error, result) => {
                 if (error) {
@@ -76,10 +94,10 @@ class QuestoesRepository {
     }
 
     // Alterar questão
-        update(id, dados) {
+        update(id, enunciado) {
         const sql = 'UPDATE tb_questoes SET ? WHERE id = ?';
         return new Promise((resolve, reject) => {
-            conexao.query(sql, [dados, id], (error, result) => {
+            conexao.query(sql, [enunciado, id], (error, result) => {
                 if (error) {
                     return reject(error);
                 }
@@ -87,5 +105,18 @@ class QuestoesRepository {
             })
         });
     }
+
+    // Remover questão
+        delete(id) {
+            const sql = 'DELETE FROM tb_questoes WHERE id = ?';
+            return new Promise((resolve, reject)=> {
+                conexao.query(sql, id, (error, result) => {
+                    if(error) {
+                        return reject(error);
+                    }
+                    resolve(result);
+                })
+            })
+        }
 }
 export default new QuestoesRepository();

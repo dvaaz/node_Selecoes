@@ -5,7 +5,8 @@ import Sanitize from "../utils/Sanitize.js";
 function conectionStatusHandler(error, result){
     // TODO: limpar os if elses de resposta
 }
-const san = new Sanitize();
+
+// const san = new Sanitize();
 
 class QuestoesController {
     // Listar todas as questoes
@@ -20,11 +21,14 @@ class QuestoesController {
         }
     
     
-    // Listar questoes por tema
+    // Listar questoes por tema (trabalhando com id do tema)
     async findByTheme(req, res){
         try{
-            const clrReq = san.text(req);
-            const result = await QuestoesRepository.findByTheme(clrReq.query.tema);
+            if(isEmpty(req.id_tema)) {
+                return res.status(400).json({ error: "Requisição vazia" });
+            }
+            // const clrReq = san.text(req.id_tema);
+            const result = await QuestoesRepository.findByTheme(req.params.id_tema);
             res.status(200).json(result);
         } catch(error) {
                 console.log(error);
@@ -35,8 +39,11 @@ class QuestoesController {
     // Encontrar por Id
     async findById(req, res){
         try{
-            const clrReq = san.text(req);
-            const result = await QuestoesRepository.findById(clrReq.params.id);
+            if(isEmpty(req.params.id_questao)) {
+                return res.status(400).json({ error: "Requisição vazia" });
+            }
+            // const clrReq = san.text(req);
+            const result = await QuestoesRepository.findById(req.params.id_questao);
             res.status(200).json(result);
         } catch(error) {
             console.log(error);
@@ -44,15 +51,32 @@ class QuestoesController {
         }
     }
 
-    // Busca por trecho do enunciado com tratamento
+    // Busca por trecho do enunciado com tratamento (funcionará????)
     async findByEnunciado(req, res){
         try{
-            const clrReq = san.text(req);
-            const result = await QuestoesRepository.findByEnunciado(clrReq.query.enunciado);
+            if(isEmpty(req.query.enunciado_questao)) {
+                return res.status(400).json({ error: "Requisição vazia" });
+            }
+            // const clrReq = san.text(req.query.enunciado_questao);
+            const result = await QuestoesRepository.findByEnunciado(req.query.enunciado_questao);
             res.status(200).json(result);
         } catch(error) {
             console.log(error);
             res.status(404).json({ error: "Questões não encontradas" });
+        }
+    }
+
+    async showQuestaoComRespostas(req, res){
+        try{
+            if(isEmpty(req.params.id_questao)) {
+                return res.status(400).json({ error: "Requisição vazia" });
+            }
+            // const clrReq = san.text(req.params.id_questao);
+            const result = await QuestoesRespository.showQuestaoComRespostas(req.params.id_questao);
+            res.status(200).json(result);
+        } catch(error) {
+            console.log(error);
+            res.status(404).json({ error: "Questão não encontrada" });
         }
     }
 
@@ -62,9 +86,19 @@ class QuestoesController {
     // TODO:Haverá também o tratamento para associar a questão ao tema e as respostas
     async store(req, res){
         try{
-            const clrReq = san.text(req.body.enunciado_questao);
-            const result = await QuestoesRepository.create({ enunciado_questao: clrReq });
-            res.status(201).json(result);
+            if(isEmpty(req.body.enunciado_questao)) {
+                return res.status(400).json({error: "Enunciado vazio"});
+            }
+            // const clrReq = san.text(req.body.enunciado_questao); 
+            // Cria questao com enunciado e retorna id
+            const idQuestao = await QuestoesRepository.create({
+                enunciado_questao: req.body.enunciado_questao
+            });
+            
+            
+            
+            
+
         } catch(error) {
             console.log(error);
             res.status(400).json({ error: "Erro ao criar questão" });
@@ -74,33 +108,21 @@ class QuestoesController {
 
     // Atualizar dados
     async update(req, res){
-        const clrReq = san.text(req);
-        const id = clrReq.params.id;
-        const selecao = clrReq.body;
-        const sql = "UPDATE db_matematica.tb_selecao SET ? WHERE ?;"
-        conexao.query(sql, [selecao, id], (error, resultado)=> {
-            if(error) {
-                console.log(error)
-            } else {
-                res.status(201).json(resultado)
-            }
-        })
+        if(isEmpty(req.params.id_questao) || isEmpty(req.body.enunciado_questao)) {
+            return res.status(400).json({ error: "Requisição vazia" });
+        }
+        // const clrReq = san.text(req);
+        try{
+            const id = req.params.id_questao;
+            const enunciado_questao = req.body.enunciado_questao;
+            const result = await QuestoesRepository.update(id, enunciado_questao);
+        }
+
     }
     
-    // Remover dados
+    // Remover dados, deletando também a relacao da questao com tema e delecao de respostas com o mesmo id
     async delete(req, res){
-        const clrReq = san.text(req);
-        const id = clrReq.body
-        const sql = "DELETE from db_matematica.tb_selecao WHERE id_selecao=?;"
-        conexao.query(sql, id, (error, resultado)=>{
-            if(error) {
-                console.log(error)
-                // TODO: status 404 error
-            } else {
-                res.status(200).json(resultado)
-            }
-        })
-    }
+ 
 }
 // Padrão Singleton
 export default new QuestoesController()
