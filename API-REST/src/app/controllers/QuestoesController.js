@@ -57,13 +57,13 @@ class QuestoesController {
     }
 
     // Criar questão
-    // tratamento do request atraves de sanitizacao
+    // tratamento do request atraves de sanitizacao 
     // campos: enunciado_questao
     // TODO:Haverá também o tratamento para associar a questão ao tema e as respostas
     async store(req, res){
         try{
-            const clrReq = san.text(req);
-            const result = await QuestoesRepository.create(clrReq.body);
+            const clrReq = san.text(req.body.enunciado_questao);
+            const result = await QuestoesRepository.create({ enunciado_questao: clrReq });
             res.status(201).json(result);
         } catch(error) {
             console.log(error);
@@ -88,7 +88,7 @@ class QuestoesController {
     }
     
     // Remover dados
-    delete(req, res){
+    async delete(req, res){
         const clrReq = san.text(req);
         const id = clrReq.body
         const sql = "DELETE from db_matematica.tb_selecao WHERE id_selecao=?;"

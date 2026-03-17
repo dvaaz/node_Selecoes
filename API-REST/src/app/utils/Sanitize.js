@@ -5,8 +5,7 @@ class Sanitize {
         
         return value
         .trim()
-        .replace(/[<>\[\];]/g, '')
-        .toUpperCase();
+        .replace(/[<>]/g, '');
     }
 }
 
