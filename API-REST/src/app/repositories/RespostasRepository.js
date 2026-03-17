@@ -32,6 +32,19 @@ class RespostasRepository {
         })
     }
 
+    // Atualizar resposta
+    update(id_resposta, texto_resposta, correta_resposta) {
+        const sql = 'UPDATE tb_respostas SET texto_resposta = ?, correta_resposta = ? WHERE id_resposta = ?';
+        return new Promise ((resolve, reject) => {
+            conexao.query(sql, [texto_resposta, correta_resposta, id_resposta], (error, result) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(result.affectedRows);
+            });
+        });
+    }
+
     // Delecao de UMA resposta por id da resposta
     deleteById(id_resposta) {
         const sql = 'DELETE FROM tb_respostas WHERE id_resposta = ?';
