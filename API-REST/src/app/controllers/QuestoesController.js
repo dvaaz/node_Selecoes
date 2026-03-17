@@ -1,6 +1,9 @@
 import QuestoesRepository from "../repositories/QuestoesRepository.js";
-import Sanitize from "../utils/Sanitize.js";
-// regra de negocios
+import QuestoesTemasRepository from "../repositories/QuestoesTemasRepository.js";
+import RespostasRepository from "../repositories/RespostasRepository.js";
+
+// import Sanitize from "../utils/Sanitize.js";
+// Controler responsavel pelas regra de negocios das questoes
 // functions
 function conectionStatusHandler(error, result){
     // TODO: limpar os if elses de resposta
@@ -91,13 +94,9 @@ class QuestoesController {
             }
             // const clrReq = san.text(req.body.enunciado_questao); 
             // Cria questao com enunciado e retorna id
-            const idQuestao = await QuestoesRepository.create({
+            const idQuestao = await QuestoesRepository.store({
                 enunciado_questao: req.body.enunciado_questao
             });
-            
-            
-            
-            
 
         } catch(error) {
             console.log(error);
@@ -116,13 +115,37 @@ class QuestoesController {
             const id = req.params.id_questao;
             const enunciado_questao = req.body.enunciado_questao;
             const result = await QuestoesRepository.update(id, enunciado_questao);
+            res.status(200).json({ message: `Questão ${result.id_questao} atualizada com sucesso` });
         }
+            catch(error) {
+                console.log(error);
+                res.status(400).json({ error: "Erro ao atualizar questão" });
+            }
 
     }
     
     // Remover dados, deletando também a relacao da questao com tema e delecao de respostas com o mesmo id
     async delete(req, res){
+        if(isEmpty(req.params.id_questao)) {
+            return res.status(400).json({ error: "Requisição vazia" });
+        }
+        try{
+            const id = req.params.id_questao;
+            const resultQuery = await QuestoesRepository.findById(id);
+            if(result.length === 0) {
+                return res.status(404).json({ error: "Questão não encontrada" });
+            }
+            await QuestoesTemasRepository.deleteByQuestao(resultQuery.id_questao);
+            await RespostasRepository.deleteByIdQuestao(resultQuery.id_questao);
+            await QuestoesRepository.delete(id);
+            res.status(200).json({ message: `Questão ${resultQuery.id_questao} deletada com sucesso` });
+
+        } catch(error) {
+            console.log(error);
+            res.status(400).json({ error: "Erro ao deletar questão" });
+        }
  
+    }
 }
 // Padrão Singleton
 export default new QuestoesController()

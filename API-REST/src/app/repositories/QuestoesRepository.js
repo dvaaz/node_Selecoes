@@ -80,7 +80,7 @@ class QuestoesRepository {
     // Criar questão no banco de dados via conexao.query
     // request deve conter: enunciado_questao
     // returns o id da questão para associar ao tb_questoes_temas e tb_respostas
-    create(enunciado) {
+    store(enunciado) {
         const sql = 'INSERT INTO tb_questoes (enunciado_questao) VALUES (?)';
         const values = [enunciado.enunciado_questao];
         return new Promise((resolve, reject) => {

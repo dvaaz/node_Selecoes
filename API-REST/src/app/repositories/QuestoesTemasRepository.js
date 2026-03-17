@@ -16,7 +16,7 @@ class QuestoesTemasRepository{
     }
 
     // Criar nova associação entre questão e tema
-    create(id_questao, id_tema) {
+    store(id_questao, id_tema) {
         const sql = 'INSERT INTO tb_questoes_temas (id_questao, id_tema) VALUES (?, ?)';
         return new Promise ((resolve, reject) => {
             conexao.query(sql, [id_questao, id_tema], (error, result) => {

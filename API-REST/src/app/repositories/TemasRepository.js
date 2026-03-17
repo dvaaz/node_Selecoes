@@ -16,7 +16,7 @@ class TemasRepository {
 }
 
     // Criar novo tema
-    create() {
+    store() {
         const sql = 'INSERT INTO tb_temas (nome_tema) VALUES (?)';
         return new Promise ((resolve, reject) => {
             conexao.query(sql, [nome_tema], (error, result) => {

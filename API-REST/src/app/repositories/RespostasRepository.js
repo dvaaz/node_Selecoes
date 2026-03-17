@@ -20,7 +20,7 @@ class RespostasRepository {
     }
 
     // Criar respostas no banco de dados
-    create(id_questao, texto_resposta, correta_resposta) {
+    store(id_questao, texto_resposta, correta_resposta) {
         const sql = 'INSERT INTO tb_respostas (id_questao, texto_resposta, correta_resposta) VALUES (?, ?, ?)';
         return new Promise ((resolve, reject) => {
             conexao.query(sql, [id_questao, texto_resposta, correta_resposta], (error, result) => {
