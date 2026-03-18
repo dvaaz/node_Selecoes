@@ -1,6 +1,7 @@
 import QuestoesRepository from "../repositories/QuestoesRepository.js";
 import QuestoesTemasRepository from "../repositories/QuestoesTemasRepository.js";
 import RespostasRepository from "../repositories/RespostasRepository.js";
+import { isEmpty } from "../utils/Utilitario.js";
 
 // import Sanitize from "../utils/Sanitize.js";
 // Controler responsavel pelas regra de negocios das questoes
@@ -97,6 +98,12 @@ class QuestoesController {
             const idQuestao = await QuestoesRepository.store({
                 enunciado_questao: req.body.enunciado_questao
             });
+            // incluir o array de respostas associadas a questao
+            if (req.body.respostas && Array.isArray(req.body.respostas)) {
+                for (const resposta of req.body.respostas) {
+                    await RespostasRepository.store(idQuestao, resposta.texto_resposta, resposta.correta_resposta);
+                }
+            }
 
         } catch(error) {
             console.log(error);
